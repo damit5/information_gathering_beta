@@ -10,7 +10,12 @@
   5. 常用端口扫描以及对应服务 port_scan.py 1个类 main() 调用 python-nmap库(√)
   6. whatweb扫描  网站脚本语言 IP 搭建平台  whatweb.py 1个类 main() 调用whatweb (√)
   7. 操作系统   whatweb 或者 nmap 可以探测    (√)
+  8. Robots 文件探测
 ```
+## Environment:
+* python 3.6
+* windows or linux
+* nmap
 
 ## Download:::
 ```

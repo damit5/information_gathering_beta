@@ -16,7 +16,7 @@ class whatweb:
         url = 'https://www.whatweb.net/whatweb.php'
         headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0','Referer':'https://www.whatweb.net/'}
         data = {'target': self.url}
-        return requests.post(url,headers=headers,data=data).content
+        return requests.post(url,headers=headers,data=data).text
 
     def parse_content(self):
         '''
@@ -36,4 +36,5 @@ class whatweb:
         主函数，启动函数
         '''
         results = self.parse_content()
+        results = [result for result in results]
         return results

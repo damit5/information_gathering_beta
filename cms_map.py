@@ -9,14 +9,16 @@ import threading
 # 通过目录识别
 class cms_map:
     # 传入 url 和 最大线程数
-    def __init__(self,url,threads=100):
+    def __init__(self,url,threads=50):
+        if 'http' not in url:
+            url = 'http://' + url
         self.url = url.strip('/')
         self.threads = threads
 
     # 返回所有需要匹配的数据（目录+md5+re+cms_name） dict
     def get_all_data(self):
         cms_data_file = './cms_map/data.json'
-        f = open(cms_data_file,'r')
+        f = open(cms_data_file,'rb')
         cms_data = json.loads(f.read())
         f.close()
         return cms_data
@@ -24,6 +26,7 @@ class cms_map:
     #   扫描主函数，启用多线程
     def main(self):
         # 定义一个变量来存放 cms 结果，方便参数传递
+        # 返回一个 list  ==>  cms_result
         cms_result = []
         semaphore = threading.Semaphore(self.threads)
         all_data = self.get_all_data()
@@ -44,13 +47,13 @@ class cms_map:
             headers = {'User-Agent':'Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10'}
             req = requests.get(url,headers=headers,timeout=3)
             if req.status_code == 200:
-                content = req.content
+                content = req.text
                 if str(data['re']) in content:
                     cms_result.append(data['name'])
-                    #print 're\t' + data['url'] + '\t' + data['name']
+                    #print ('re\t' + data['url'] + '\t' + data['name'])
             semaphore.release()
         except Exception as e:
-            #print e
+            #print (e)
             semaphore.release()
 
     # 通过 md5 匹配
@@ -63,10 +66,10 @@ class cms_map:
                 hash_md5 = self.md5_encrypt(content)
                 if hash_md5 == data['md5']:
                     cms_result.append(data['name'])
-                    #print 'md5\t' + data['url'] + '\t' + data['name']
+                    #print ('md5\t' + data['url'] + '\t' + data['name'])
             semaphore.release()
         except Exception as e:
-            #print e
+            #print (e)
             semaphore.release()
 
     # md5加密
@@ -77,7 +80,7 @@ class cms_map:
 # 调用网上 api
 class cms_api:
     def __init__(self,url):
-        self.url = url
+        self.url = url.replace('http://','').replace('https://','').replace('/','')
 
     def main(self):
         url = 'http://whatweb.bugscaner.com/what/'
@@ -85,5 +88,5 @@ class cms_api:
         cocokies = {'saeut': 'CkMPHlqbqdBQWl9NBG+uAg=='}
         new_url = self.url.strip('/').replace('http://','').replace('https://','')
         data = {'url': new_url, 'hash': '0eca8914342fc63f5a2ef5246b7a3b14_7289fd8cf7f420f594ac165e475f1479'}
-        content = json.loads(requests.post(url,headers=headers,data=data).content)
+        content = json.loads(requests.post(url,headers=headers,data=data).text)
         return content['cms']

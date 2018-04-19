@@ -26,6 +26,8 @@ CDN = {
 class cdn_finder:
 
     def __init__(self,url):
+        if 'http' not in url:
+            url = 'http://' + url
         self.url = url
 
     def ErrorServerDetection(self):
@@ -37,7 +39,7 @@ class cdn_finder:
         host = re.sub('https://|/|http://','',self.url)
         ip = socket.gethostbyname(host)
         try:
-            content = requests.get('http://' + ip,timeout=10).content
+            content = requests.get('http://' + ip,timeout=10).text
         except:
             content = ''
         for keyword,description in CDN.items():
