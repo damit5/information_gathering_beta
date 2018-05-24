@@ -1,3 +1,7 @@
+# 5.24 更新
+
+## 暑假重新整理这个仓库，优化结构
+
 # infomation_gathering_beta
 
 #### beta版目前实现了以下功能
